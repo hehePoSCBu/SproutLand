@@ -72,6 +72,7 @@ class Player(pygame.sprite.Sprite):
 
             if keys[pygame.K_m]:
                 self.timers['tool_use'].activate()
+                self.direction=pygame.math.Vector2()
 
         if keys[pygame.K_ESCAPE]:
             pygame.quit()
@@ -82,7 +83,7 @@ class Player(pygame.sprite.Sprite):
             self.status=self.status.split('_')[0]+'_idle'
 
         if self.timers['tool_use'].active:
-
+            self.status = self.status.split('_')[0] +'_'+ self.selected_tool
 
     def move(self,dt):
         if self.direction.magnitude()>0:
@@ -94,8 +95,14 @@ class Player(pygame.sprite.Sprite):
         self.pos.y+=self.direction.y*self.speed*dt
         self.rect.centery=self.pos.y
 
+    def update_timers(self):
+        for timer in self.timers.values():
+            timer.update()
+
     def update(self, dt):
         self.input()
         self.get_status()
+        self.update_timers()
+
         self.move(dt)
         self.animate(dt)
