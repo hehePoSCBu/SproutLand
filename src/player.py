@@ -1,6 +1,7 @@
 import pygame,sys
 from setting import *
 from support import *
+from timer import Timer
 
 class Player(pygame.sprite.Sprite):
     def __init__(self,pos,group):
@@ -17,6 +18,15 @@ class Player(pygame.sprite.Sprite):
         self.direction=pygame.math.Vector2()
         self.pos=pygame.math.Vector2(self.rect.center)
         self.speed=200
+
+        self.timers={
+            'tool_use':Timer(350,self.use_tool)
+        }
+
+        self.selected_tool='axe'
+
+    def use_tool(self):
+        print(self.selected_tool)
 
     def import_assets(self):
         self.animations={
@@ -40,24 +50,28 @@ class Player(pygame.sprite.Sprite):
     def input(self):
         keys=pygame.key.get_pressed()
 
-        if keys[pygame.K_w]:
-            self.direction.y=-1
-            self.status='up'
-        elif keys[pygame.K_s]:
-            self.direction.y=1
-            self.status = 'down'
-        else:
-            self.direction.y=0
+        if not self.timers['tool_use'].active:
+            if keys[pygame.K_w]:
+                self.direction.y=-1
+                self.status='up'
+            elif keys[pygame.K_s]:
+                self.direction.y=1
+                self.status = 'down'
+            else:
+                self.direction.y=0
 
 
-        if keys[pygame.K_a]:
-            self.direction.x=-1
-            self.status = 'left'
-        elif keys[pygame.K_d]:
-            self.direction.x=1
-            self.status = 'right'
-        else:
-            self.direction.x = 0
+            if keys[pygame.K_a]:
+                self.direction.x=-1
+                self.status = 'left'
+            elif keys[pygame.K_d]:
+                self.direction.x=1
+                self.status = 'right'
+            else:
+                self.direction.x = 0
+
+            if keys[pygame.K_m]:
+                self.timers['tool_use'].activate()
 
         if keys[pygame.K_ESCAPE]:
             pygame.quit()
@@ -65,7 +79,10 @@ class Player(pygame.sprite.Sprite):
 
     def get_status(self):
         if self.direction.magnitude()==0:
-            self.status+=self.status.split('_')[0]+'_idle'
+            self.status=self.status.split('_')[0]+'_idle'
+
+        if self.timers['tool_use'].active:
+
 
     def move(self,dt):
         if self.direction.magnitude()>0:
