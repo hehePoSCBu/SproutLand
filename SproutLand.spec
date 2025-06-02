@@ -7,7 +7,7 @@ a = Analysis(
     binaries=[],
     datas=[
         ('src/*','src'),
-        ('assets/*','assets')
+        ('assets/**/*','assets')
     ],
     hiddenimports=[],
     hookspath=[],
@@ -38,5 +38,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='assets/logo.png',
 )
